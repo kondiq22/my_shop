@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+
 import './cart.dart';
 
 class OrderItem {
@@ -28,12 +29,10 @@ class Orders with ChangeNotifier {
       OrderItem(
         id: DateTime.now().toString(),
         amount: total,
-        products: cartProducts,
         dateTime: DateTime.now(),
+        products: cartProducts,
       ),
     );
     notifyListeners();
   }
-
-  
 }
