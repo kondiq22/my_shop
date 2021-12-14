@@ -104,9 +104,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.https(
-        'shop-377aa-default-rtdb.europe-west1.firebasedatabase.app',
-        '/products.json');
+    final url = Uri.parse(
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products.json');
     try {
       final response = await http.post(
         url,
@@ -161,7 +160,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     _items.removeWhere((prod) => prod.id == id);
     final url = Uri.parse(
-        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.jso');
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     final response = await http.delete(url);
