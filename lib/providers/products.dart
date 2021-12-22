@@ -152,7 +152,7 @@ class Products with ChangeNotifier {
       //     'shop-377aa-default-rtdb.europe-west1.firebasedatabase.app',
       //     '/products/$id.json');
       final url = Uri.parse(
-          'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?=auth=$authToken');
+          'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
 
       await http.patch(url,
           body: json.encode({
