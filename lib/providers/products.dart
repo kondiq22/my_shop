@@ -74,9 +74,9 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     final filterString =
-        filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url = Uri.parse(
-        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products.json?=auth=$authToken&$filterString');
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -84,31 +84,25 @@ class Products with ChangeNotifier {
         return;
       }
 
-      print(extractedData);
+      // print(extractedData);
       url = Uri.parse(
-          'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId.json?=auth=$authToken');
+          'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken');
       final favoriteResponse = await http.get(url);
       final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
-
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          imageUrl: prodData['imageUrl'],
           isFavorite:
               favoriteData == null ? false : favoriteData[prodId] ?? false,
+          imageUrl: prodData['imageUrl'],
         ));
       });
-      // print(extractedData);
-      // print(loadedProducts[0].price);
-      // print(loadedProducts[0].imageUrl);
-
       _items = loadedProducts;
       notifyListeners();
-      // print(_items[1].price);
     } catch (error) {
       throw (error);
     }
@@ -116,7 +110,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products.json?=auth=$authToken');
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -148,9 +142,6 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      // final url = Uri.https(
-      //     'shop-377aa-default-rtdb.europe-west1.firebasedatabase.app',
-      //     '/products/$id.json');
       final url = Uri.parse(
           'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
 
@@ -158,8 +149,8 @@ class Products with ChangeNotifier {
           body: json.encode({
             'title': newProduct.title,
             'description': newProduct.description,
-            'price': newProduct.price,
             'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price
           }));
       _items[prodIndex] = newProduct;
       notifyListeners();
@@ -171,7 +162,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     _items.removeWhere((prod) => prod.id == id);
     final url = Uri.parse(
-        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?=auth=$authToken');
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     final response = await http.delete(url);
@@ -179,7 +170,7 @@ class Products with ChangeNotifier {
       _items.insert(existingProductIndex, existingProduct);
 
       notifyListeners();
-      throw Exception('Could not delete product.');
+      throw HttpException('Could not delete product.');
     }
     existingProduct = null;
 

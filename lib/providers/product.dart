@@ -31,7 +31,7 @@ class Product with ChangeNotifier {
     notifyListeners();
 
     final url = Uri.parse(
-        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?=auth=$token');
+        'https://shop-377aa-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
     try {
       final response = await http.put(
         url,
